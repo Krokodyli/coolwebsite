@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cool trick website</title>
+  <style>
+    html, body { width:100%; height:100%; margin:0 }
+  </style>
+</head>
+<body>
+  <button id="button" style="width: 500px; height:500px">Click me</button>
+  <iframe
+    id="yt"
+    width="0%"
+    height="0%"
+    src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=9Buxzu7Jw0vt8fhc&autoplay=1&playsinline=1&controls=0&mute=1&enablejsapi=1"
+    title="YouTube video player"
+    frameborder="0"
+    allow="autoplay; encrypted-media; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen>
+  </iframe>
+ 
+  <script>
+    const iframe = document.getElementById('yt');
+    const button = document.getElementById('button')
+ 
+    if (location.protocol !== 'file:') {
+      const u = new URL(iframe.src);
+      u.searchParams.set('origin', location.origin);
+      iframe.src = u.toString();
+    }
+ 
+    function ytCmd(func, args = []) {
+      iframe?.contentWindow?.postMessage(JSON.stringify({
+        event: 'command', func, args
+      }), '*');
+    }
+ 
+    function unlockAudio() {
+      document.title = "Rick rolled!"
+      ytCmd('unMute');
+      ytCmd('setVolume', [100]);
+      ytCmd('playVideo');
+      button?.remove()
+      iframe.width = '100%'
+      iframe.height = '100%'
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+      window.removeEventListener('touchstart', unlockAudio, { passive: true });
+    }
+ 
+    window.addEventListener('pointerdown', unlockAudio, { once: true });
+    window.addEventListener('keydown', unlockAudio, { once: true });
+    window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+  </script>
+</body>
+</html>
